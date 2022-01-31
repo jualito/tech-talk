@@ -26,6 +26,18 @@ func init() {
 func New(version string) func() *schema.Provider {
 	return func() *schema.Provider {
 		p := &schema.Provider{
+			Schema: map[string]*schema.Schema{
+				"url": {
+					Type:        schema.TypeString,
+					Required:    true,
+					DefaultFunc: schema.EnvDefaultFunc("MM_URL", nil),
+				},
+				"token": {
+					Type:        schema.TypeString,
+					Required:    true,
+					DefaultFunc: schema.EnvDefaultFunc("MM_TOKEN", nil),
+				},
+			},
 			DataSourcesMap: map[string]*schema.Resource{
 				"scaffolding_data_source": dataSourceScaffolding(),
 			},
