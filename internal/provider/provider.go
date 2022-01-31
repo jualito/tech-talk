@@ -5,6 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/mattermost/mattermost-server/v6/model"
 )
 
 func init() {
@@ -59,11 +60,16 @@ type apiClient struct {
 }
 
 func configure(version string, p *schema.Provider) func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
-	return func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
+	return func(_ context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 		// Setup a User-Agent for your API client (replace the provider name for yours):
 		// userAgent := p.UserAgent("terraform-provider-scaffolding", version)
 		// TODO: myClient.UserAgent = userAgent
+		url := d.Get("url").(string)
+		token := d.Get("token").(string)
 
-		return &apiClient{}, nil
+		c := model.NewAPIv4Client(url)
+		c.SetOAuthToken(token)
+
+		return c, nil
 	}
 }
